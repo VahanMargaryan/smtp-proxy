@@ -77,8 +77,10 @@ func (s *Session) Mail(from string, opts *smtp.MailOptions) error {
 	if !s.auth {
 		return smtp.ErrAuthRequired
 	}
+	// Client from is accepted but always overridden by DestFrom for relay.
+	// Clients may send MAIL FROM:<> or any valid address.
 	s.from = from
-	slog.Debug("MAIL FROM", "from", from)
+	slog.Debug("MAIL FROM", "client_from", from, "relay_from", s.config.DestFrom)
 	return nil
 }
 
@@ -118,8 +120,12 @@ func (s *Session) Data(r io.Reader) error {
 		}
 	}
 
+	// Use DestFrom as envelope sender (falls back to DestUsername via config)
+	envelopeFrom := s.config.DestFrom
+
 	slog.Info("processing message",
-		"original_from", s.from,
+		"client_from", s.from,
+		"envelope_from", envelopeFrom,
 		"recipients", s.recipients,
 		"size", len(raw),
 	)
@@ -135,7 +141,7 @@ func (s *Session) Data(r io.Reader) error {
 		}
 	}
 
-	slog.Info("message relayed", "recipients", s.recipients)
+	slog.Info("message relayed", "from", envelopeFrom, "recipients", s.recipients)
 	return nil
 }
 
