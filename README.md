@@ -16,19 +16,20 @@ Third-party App  ──SMTP──▶  smtp-proxy  ──SMTP──▶  Upstream 
 4. A new Message-ID is generated
 5. The sanitized email is forwarded to the upstream SMTP server
 
-## Quick Start
+## Install
 
 ```bash
-# Clone and build
-git clone <repo-url> && cd smtp-proxy
-go build -o smtp-proxy .
+curl -fsSL https://raw.githubusercontent.com/VahanMargaryan/smtp-proxy/main/install.sh | sudo bash
+```
 
-# Configure
-cp .env.example .env
-# Edit .env with your upstream SMTP credentials and proxy credentials
+This downloads the latest release binary, creates a `smtp-proxy` system user, installs a systemd service, and creates a default config at `/etc/default/smtp-proxy`.
 
-# Run
-./smtp-proxy
+```bash
+# Edit config with your SMTP credentials
+sudo nano /etc/default/smtp-proxy
+
+# Start the service
+sudo systemctl start smtp-proxy
 ```
 
 Then configure your application to use the proxy as its SMTP server:
@@ -36,6 +37,16 @@ Then configure your application to use the proxy as its SMTP server:
 - **Port**: `2525` (default)
 - **Username**: value of `SMTP_PROXY_USERNAME`
 - **Password**: value of `SMTP_PROXY_PASSWORD`
+
+### From source
+
+```bash
+git clone https://github.com/VahanMargaryan/smtp-proxy.git && cd smtp-proxy
+go build -o smtp-proxy .
+cp .env.example .env
+# Edit .env with your credentials
+./smtp-proxy
+```
 
 ## Docker
 

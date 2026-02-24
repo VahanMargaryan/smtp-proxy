@@ -1,0 +1,37 @@
+[Unit]
+Description=SMTP Proxy Relay
+Documentation=https://github.com/VahanMargaryan/smtp-proxy
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/smtp-proxy
+EnvironmentFile=/etc/default/smtp-proxy
+Restart=on-failure
+RestartSec=5
+
+# Security hardening
+User=smtp-proxy
+Group=smtp-proxy
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+RestrictRealtime=true
+MemoryDenyWriteExecute=true
+LockPersonality=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=smtp-proxy
+
+[Install]
+WantedBy=multi-user.target
