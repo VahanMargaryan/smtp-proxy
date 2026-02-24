@@ -54,7 +54,7 @@ jobs:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
           GOARM: ${{ matrix.goarm }}
-        run: go build -ldflags="-s -w" -o smtp-proxy-${{ matrix.suffix }}${{ matrix.ext }} .
+        run: go build -ldflags="-s -w -X main.version=${GITHUB_REF_NAME}" -o smtp-proxy-${{ matrix.suffix }}${{ matrix.ext }} .
 
       - uses: actions/upload-artifact@v4
         with:

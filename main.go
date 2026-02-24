@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"flag"
+	"fmt"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -16,7 +18,17 @@ import (
 	"smtp-proxy/internal/relay"
 )
 
+// version is set at build time via -ldflags.
+var version = "dev"
+
 func main() {
+	showVersion := flag.Bool("version", false, "print version and exit")
+	flag.Parse()
+	if *showVersion {
+		fmt.Println(version)
+		return
+	}
+
 	// Load .env file if present (ignore error if missing)
 	_ = godotenv.Load()
 
